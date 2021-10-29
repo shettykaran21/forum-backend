@@ -3,10 +3,9 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 require('dotenv').config()
 
+const config = require('./config')
 const questionRoutes = require('./routes/questions')
 const userRoutes = require('./routes/users')
-
-const PORT = 8080
 
 const app = express()
 
@@ -24,12 +23,12 @@ app.use((error, req, res, next) => {
 })
 
 const connect = async () => {
-  await mongoose.connect(process.env.MONGODB_CONNECTION_URL)
+  await mongoose.connect(config.db.url)
   console.log('Connected to MongoDB')
 }
 
 connect().catch((err) => console.log(err))
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`)
+app.listen(config.port, () => {
+  console.log(`Server is running on port ${config.port}`)
 })
