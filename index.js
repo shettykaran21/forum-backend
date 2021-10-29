@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
+require('dotenv').config()
 
 const questionRoutes = require('./routes/questions')
 const userRoutes = require('./routes/users')
@@ -23,9 +24,7 @@ app.use((error, req, res, next) => {
 })
 
 const connect = async () => {
-  await mongoose.connect(
-    'mongodb+srv://shettykaran21:QzwobCNMJ06fbxgf@cluster0.qkxzl.mongodb.net/forum?retryWrites=true&w=majority'
-  )
+  await mongoose.connect(process.env.MONGODB_CONNECTION_URL)
   console.log('Connected to MongoDB')
 }
 
