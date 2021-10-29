@@ -1,14 +1,12 @@
-const express = require('express');
+const express = require('express')
+const cors = require('cors')
 
-const PORT = 8080;
+const PORT = 8080
 
-const app = express();
+const app = express()
 
-app.use(express.json());
-
-app.get('/', (req, res, next) => {
-  res.status(200).json({message: 'Hello World'})
-})
+app.use(cors())
+app.use(express.json())
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
