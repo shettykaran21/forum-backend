@@ -7,7 +7,18 @@ exports.getQuestions = async (req, res, next) => {
   } catch (error) {
     if (!err.statusCode) {
       err.statusCode = 500
-      next(err)
     }
+    next(err)
+  }
+}
+
+exports.createQuestion = async (req, res, next) => {
+  try {
+    res.status(201).json({ message: 'Post created successfully' })
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500
+    }
+    next(err)
   }
 }
