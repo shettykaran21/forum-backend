@@ -48,7 +48,7 @@ questionSchema.set('toJSON', { getters: true })
 questionSchema.options.toJSON.transform = (doc, ret, options) => {
   delete ret.id
   delete ret.__v
-  return obj
+  return ret
 }
 
 module.exports = mongoose.model('Question', questionSchema)

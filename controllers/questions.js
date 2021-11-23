@@ -4,10 +4,25 @@ const Question = require('../models/question')
 
 exports.getQuestions = async (req, res, next) => {
   try {
-    const { sortType = '-score' } = req.body
-    const questions = await Question.find().sort(sortType)
-    res.status(200).json(questions)
-  } catch (error) {
+    let sortType = '-score'
+    let questions
+
+    if (req.query.sort) {
+      sortType = `-${req.query.sort}`
+    }
+
+    if (req.query.tag) {
+      questions = await Question.find({ tags: { $all: req.query.tag } }).sort(
+        sortType
+      )
+    } else {
+      questions = await Question.find().sort(sortType)
+    }
+
+    res
+      .status(200)
+      .json({ message: 'Questions fetched successfully', questions })
+  } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500
     }
