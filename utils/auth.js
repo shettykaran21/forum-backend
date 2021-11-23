@@ -37,7 +37,12 @@ const hashPassword = (password) => {
   })
 }
 
+const verifyPassword = (password, hashedPassword) => {
+  return bcrypt.compare(password, hashedPassword)
+}
+
 module.exports = {
   hashPassword,
   createToken,
+  verifyPassword,
 }
