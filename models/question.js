@@ -45,4 +45,11 @@ const questionSchema = new Schema({
 
 questionSchema.set('toJSON', { getters: true })
 
+questionSchema.options.toJSON.transform = (doc, ret, options) => {
+  const obj = { ...ret }
+  delete obj._id
+  delete obj.__v
+  return obj
+}
+
 module.exports = mongoose.model('Question', questionSchema)
