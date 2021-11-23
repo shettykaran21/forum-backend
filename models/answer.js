@@ -27,4 +27,6 @@ const answerSchema = new Schema({
   comments: [commentSchema],
 })
 
+answerSchema.set('toJSON', { getters: true })
+
 module.exports = answerSchema

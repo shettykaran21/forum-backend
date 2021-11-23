@@ -18,4 +18,6 @@ const commentSchema = new Schema({
   },
 })
 
+commentSchema.set('toJSON', { getters: true })
+
 module.exports = commentSchema

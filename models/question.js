@@ -9,7 +9,7 @@ const Schema = mongoose.Schema
 const questionSchema = new Schema({
   author: {
     type: Schema.Types.ObjectId,
-    ref: 'user',
+    ref: 'User',
     required: true,
   },
   title: {
@@ -42,5 +42,7 @@ const questionSchema = new Schema({
   comments: [commentSchema],
   answers: [answerSchema],
 })
+
+questionSchema.set('toJSON', { getters: true })
 
 module.exports = mongoose.model('Question', questionSchema)
