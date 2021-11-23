@@ -17,7 +17,7 @@ exports.getUser = async (req, res, next) => {
   try {
     const { username } = req.params
 
-    const user = await User.findOne({ username: username })
+    const user = await User.findOne({ username })
 
     if (!user) {
       const error = new Error('Could not find user')
@@ -25,6 +25,22 @@ exports.getUser = async (req, res, next) => {
       throw error
     }
     res.status(200).json({ message: 'User found', user })
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500
+      next(err)
+    }
+  }
+}
+
+exports.searchUsers = async (req, res, next) => {
+  try {
+    const { searchUsername } = req.params
+
+    const users = await User.find({
+      username: { $regex: searchUsername, $options: 'i' },
+    })
+    res.status(200).json(users)
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500
