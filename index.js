@@ -6,6 +6,7 @@ require('dotenv').config()
 const config = require('./config')
 const questionRoutes = require('./routes/questions')
 const userRoutes = require('./routes/users')
+const authRoutes = require('./routes/auth')
 
 const app = express()
 
@@ -14,6 +15,7 @@ app.use(express.json())
 
 app.use('/questions', questionRoutes)
 app.use('/users', userRoutes)
+app.use('/auth', authRoutes)
 
 app.use((error, req, res, next) => {
   const status = error.statusCode || 500

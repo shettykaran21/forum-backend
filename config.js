@@ -3,4 +3,8 @@ module.exports = {
   db: {
     url: process.env.MONGODB_DATABASE_URL || 'mongodb://localhost:27017/forum',
   },
-};
+  jwt: {
+    secret: process.env.JWT_SECRET || 'secret',
+    expiry: '3d',
+  },
+}
