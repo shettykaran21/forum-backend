@@ -37,6 +37,7 @@ exports.createQuestion = async (req, res, next) => {
     if (!errors.isEmpty()) {
       const error = new Error('Validation failed')
       error.statusCode = 422
+      error.data = errors.array({ onlyFirstError: true })
       throw error
     }
 
@@ -48,7 +49,9 @@ exports.createQuestion = async (req, res, next) => {
       tags,
       text,
     })
-    res.status(201).json({ message: 'Question posted successfully', question })
+    res
+      .status(201)
+      .json({ message: 'Question posted successfully', data: question })
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500
