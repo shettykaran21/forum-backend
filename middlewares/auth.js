@@ -38,3 +38,14 @@ exports.answerAuth = (req, res, next) => {
 
   res.status(401).json({ message: 'You cannot delete this answer' })
 }
+
+exports.questionAuth = (req, res, next) => {
+  if (
+    req.question.author._id.equals(req.user.id) ||
+    req.user.role === 'admin'
+  ) {
+    return next()
+  }
+
+  res.status(401).json({ message: 'You cannot delete this question' })
+}

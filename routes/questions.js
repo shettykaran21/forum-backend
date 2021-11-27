@@ -6,8 +6,9 @@ const {
   getQuestion,
   loadQuestion,
   getQuestionsByUser,
+  deleteQuestion,
 } = require('../controllers/questions')
-const { isAuth } = require('../middlewares/auth')
+const { isAuth, questionAuth } = require('../middlewares/auth')
 const { validateQuestion } = require('../middlewares/validaton')
 
 const router = express.Router()
@@ -21,5 +22,7 @@ router.post('/question', [isAuth, validateQuestion], createQuestion)
 router.get('/question/:questionId', getQuestion)
 
 router.get('/user/:username', getQuestionsByUser)
+
+router.delete('/:questionId', [isAuth, questionAuth], deleteQuestion)
 
 module.exports = router

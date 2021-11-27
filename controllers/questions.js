@@ -142,3 +142,15 @@ exports.getQuestionsByUser = async (req, res, next) => {
     next(err)
   }
 }
+
+exports.deleteQuestion = async (req, res, next) => {
+  try {
+    await req.question.remove()
+    res.status(200).json({ message: 'Question deleted successfully' })
+  } catch (error) {
+    if (!err.statusCode) {
+      err.statusCode = 500
+    }
+    next(err)
+  }
+}
