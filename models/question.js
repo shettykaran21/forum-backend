@@ -51,4 +51,25 @@ questionSchema.options.toJSON.transform = (doc, ret, options) => {
   return ret
 }
 
+questionSchema.methods = {
+  addAnswer: (author, text) => {
+    this.answers.push({ author, text })
+    return this.save()
+  },
+}
+
+questionSchema.pre('save', (next) => {
+  this.wasNew = this.isNew
+  next()
+})
+
+questionSchema.post('save', (doc, next) => {
+  if (this.wasNew) this.vote(this.author._id, 1)
+  doc
+    .populate('author')
+    .populate('answers.author', '-role')
+    .execPopulate()
+    .then(() => next())
+})
+
 module.exports = mongoose.model('Question', questionSchema)

@@ -2,6 +2,28 @@ const { validationResult } = require('express-validator')
 
 const Question = require('../models/question')
 
+exports.loadQuestion = async (req, res, next, id) => {
+  try {
+    let question
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      question = await Question.findById(id)
+    }
+
+    if (!question)
+      return res.status(404).json({ message: 'Question not found.' })
+
+    console.log(question)
+
+    req.question = question
+  } catch (error) {
+    if (!err.statusCode) {
+      err.statusCode = 500
+    }
+    next(err)
+  }
+  next()
+}
+
 exports.getQuestions = async (req, res, next) => {
   try {
     let sortType = '-score'
