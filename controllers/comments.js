@@ -1,3 +1,5 @@
+const { validationResult } = require('express-validator')
+
 exports.loadComment = async (req, res, next, id) => {
   try {
     const comment = await req.question.comments.id(id)
@@ -48,8 +50,17 @@ exports.createComment = async (req, res, next) => {
   }
 }
 
-exports.deleteComment = async (req, res) => {
-  console.log(req.comment)
-
-  res.status(200).json({ message: 'Comment deleted successfully' })
+exports.deleteComment = async (req, res, next) => {
+  try {
+    const { commentId } = req.params
+    const question = await req.question.removeComment(commentId)
+    return res
+      .status(200)
+      .json({ message: 'Comment deleted successfully', data: question })
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500
+    }
+    next(err)
+  }
 }

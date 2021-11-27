@@ -55,7 +55,9 @@ exports.deleteAnswer = async (req, res, next) => {
   try {
     const { answerId } = req.params
     const question = await req.question.removeAnswer(answerId)
-    res.status(200).json({ message: 'Answer deleted', data: question })
+    res
+      .status(200)
+      .json({ message: 'Answer deleted successfully', data: question })
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500
