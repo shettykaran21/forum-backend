@@ -71,3 +71,16 @@ exports.validateAnswer = [
     .isLength({ max: 30000 })
     .withMessage('Answer must be at most 30000 characters long'),
 ]
+
+exports.validateComment = [
+  body('text')
+    .exists()
+    .trim()
+    .withMessage('Comment is required')
+
+    .notEmpty()
+    .withMessage('Comment cannot be blank')
+
+    .isLength({ max: 1000 })
+    .withMessage('Comment must be at most 1000 characters long'),
+]
