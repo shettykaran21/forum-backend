@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator')
 
 const Question = require('../models/question')
+const User = require('../models/user')
 
 exports.loadQuestion = async (req, res, next, id) => {
   try {
@@ -103,6 +104,37 @@ exports.getQuestion = async (req, res, next) => {
     res
       .status(200)
       .json({ message: 'Question fetched successfully', data: question })
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500
+    }
+    next(err)
+  }
+}
+
+exports.getQuestionsByUser = async (req, res, next) => {
+  try {
+    const { username } = req.params
+
+    let sortType = '-created'
+    if (req.query.sort) {
+      sortType = `-${req.query.sort}`
+    }
+
+    const author = await User.findOne({ username })
+
+    if (!author) {
+      const error = new Error('User not found')
+      error.statusCode = 404
+      throw error
+    }
+
+    const questions = await Question.find({ author: author.id }).sort(sortType)
+
+    res.status(200).json({
+      message: 'Questions by user fetched successfully',
+      data: questions,
+    })
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500
