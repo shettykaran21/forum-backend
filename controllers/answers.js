@@ -1,5 +1,29 @@
 const { validationResult } = require('express-validator')
 
+exports.loadAnswer = async (req, res, next, id) => {
+  try {
+    const answer = await req.question.answers.id(id)
+
+    if (!answer) {
+      const error = new Error('Answer not found')
+      error.statusCode = 404
+      throw error
+    }
+
+    req.answer = answer
+  } catch (err) {
+    if (err.name === 'CastError') {
+      err.statusCode = 400
+      err.message = 'Invalid answer id'
+    }
+    if (!err.statusCode) {
+      err.statusCode = 500
+    }
+    next(err)
+  }
+  next()
+}
+
 exports.createAnswer = async (req, res, next) => {
   const errors = validationResult(req)
 

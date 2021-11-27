@@ -32,6 +32,9 @@ exports.isAuth = (req, res, next) => {
 }
 
 exports.answerAuth = (req, res, next) => {
-  console.log('Answer user authentication')
-  next()
+  if (req.answer.author._id.equals(req.user.id) || req.user.role === 'admin') {
+    return next()
+  }
+
+  res.status(401).json({ message: 'You cannot delete this answer' })
 }
