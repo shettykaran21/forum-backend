@@ -6,7 +6,7 @@ const {
   getQuestion,
   loadQuestion,
 } = require('../controllers/questions')
-const isAuth = require('../middlewares/isAuth')
+const { isAuth } = require('../middlewares/auth')
 const validateQuestion = require('../middlewares/validation/validateQuestion')
 
 const router = express.Router()

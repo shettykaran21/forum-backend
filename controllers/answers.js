@@ -26,3 +26,5 @@ exports.createAnswer = async (req, res, next) => {
     next(err)
   }
 }
+
+exports.deleteAnswer = async (req, res, next) => {}
