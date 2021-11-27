@@ -16,6 +16,10 @@ const commentSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  score: {
+    type: Number,
+    default: 0,
+  },
 })
 
 commentSchema.set('toJSON', { getters: true })
