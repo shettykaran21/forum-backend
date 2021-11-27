@@ -1,3 +1,27 @@
+exports.loadComment = async (req, res, next, id) => {
+  try {
+    const comment = await req.question.comments.id(id)
+
+    if (!comment) {
+      const error = new Error('Comment not found')
+      error.statusCode = 404
+      throw error
+    }
+
+    req.comment = comment
+  } catch (err) {
+    if (err.name === 'CastError') {
+      err.statusCode = 400
+      err.message = 'Invalid comment id'
+    }
+    if (!err.statusCode) {
+      err.statusCode = 500
+    }
+    next(err)
+  }
+  next()
+}
+
 exports.createComment = async (req, res, next) => {
   const errors = validationResult(req)
 
@@ -22,4 +46,10 @@ exports.createComment = async (req, res, next) => {
     }
     next(err)
   }
+}
+
+exports.deleteComment = async (req, res) => {
+  console.log(req.comment)
+
+  res.status(200).json({ message: 'Comment deleted successfully' })
 }
