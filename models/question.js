@@ -56,6 +56,19 @@ questionSchema.methods = {
     this.answers.push({ author, text })
     return this.save()
   },
+
+  removeAnswer: function (id) {
+    const answer = this.answers.id(id)
+
+    if (!answer) {
+      const error = new Error('Answer not found')
+      error.statusCode = 404
+      throw error
+    }
+
+    answer.remove()
+    return this.save()
+  },
 }
 
 questionSchema.pre(/^find/, function () {

@@ -9,7 +9,7 @@ const validateAnswer = [
     .notEmpty()
     .withMessage('Answer cannot be blank')
 
-    .isLength({ min: 5 })
+    .isLength({ min: 25 })
     .withMessage('Answer must be at least 30 characters long')
 
     .isLength({ max: 30000 })
