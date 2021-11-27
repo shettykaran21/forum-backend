@@ -69,10 +69,17 @@ questionSchema.methods = {
     answer.remove()
     return this.save()
   },
+
+  addComment: function (author, body) {
+    this.comments.push({ author, body })
+    return this.save()
+  },
 }
 
 questionSchema.pre(/^find/, function () {
-  this.populate('author').populate('answers.author', '-role')
+  this.populate('author')
+    .populate('answers.author', '-role')
+    .populate('comments.author', '-role')
 })
 
 questionSchema.pre('save', function (next) {
@@ -83,6 +90,7 @@ questionSchema.pre('save', function (next) {
 questionSchema.post('save', async function (doc, next) {
   await doc.populate('author')
   await doc.populate('answers.author', '-role')
+  await doc.populate('comments.author', '-role')
   next()
 })
 
