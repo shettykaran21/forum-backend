@@ -4,18 +4,20 @@ const Question = require('../models/question')
 
 exports.loadQuestion = async (req, res, next, id) => {
   try {
-    let question
-    if (id.match(/^[0-9a-fA-F]{24}$/)) {
-      question = await Question.findById(id)
+    const question = await Question.findById(id)
+
+    if (!question) {
+      const error = new Error('Question not found')
+      error.statusCode = 404
+      throw error
     }
 
-    if (!question)
-      return res.status(404).json({ message: 'Question not found.' })
-
-    console.log(question)
-
     req.question = question
-  } catch (error) {
+  } catch (err) {
+    if (err.name === 'CastError') {
+      err.statusCode = 400
+      err.message = 'Invalid question id'
+    }
     if (!err.statusCode) {
       err.statusCode = 500
     }
@@ -43,7 +45,7 @@ exports.getQuestions = async (req, res, next) => {
 
     res
       .status(200)
-      .json({ message: 'Questions fetched successfully', questions })
+      .json({ message: 'Questions fetched successfully', data: questions })
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500
@@ -98,7 +100,9 @@ exports.getQuestion = async (req, res, next) => {
       throw error
     }
 
-    res.status(200).json(question)
+    res
+      .status(200)
+      .json({ message: 'Question fetched successfully', data: question })
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500

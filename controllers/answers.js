@@ -1,11 +1,7 @@
 const { validationResult } = require('express-validator')
 
-const Question = require('../models/question')
-
 exports.createAnswer = async (req, res, next) => {
   const errors = validationResult(req)
-
-  const questionId = req.params.questionId
 
   try {
     if (!errors.isEmpty()) {
@@ -18,10 +14,11 @@ exports.createAnswer = async (req, res, next) => {
     const { id } = req.user
     const { text } = req.body
 
-    const question = await Question.findById(questionId)
-    // await question.addAnswer(id, text)
+    const question = await req.question.addAnswer(id, text)
 
-    res.status(201).json({ message: 'Answer posted successfully' })
+    res
+      .status(201)
+      .json({ message: 'Answer posted successfully', data: question })
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500

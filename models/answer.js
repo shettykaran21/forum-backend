@@ -8,7 +8,7 @@ const Schema = mongoose.Schema
 const answerSchema = new Schema({
   author: {
     type: Schema.Types.ObjectId,
-    ref: 'user',
+    ref: 'User',
     required: true,
   },
   created: {

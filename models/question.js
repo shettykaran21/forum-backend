@@ -52,24 +52,25 @@ questionSchema.options.toJSON.transform = (doc, ret, options) => {
 }
 
 questionSchema.methods = {
-  addAnswer: (author, text) => {
+  addAnswer: function (author, text) {
     this.answers.push({ author, text })
     return this.save()
   },
 }
 
-questionSchema.pre('save', (next) => {
+questionSchema.pre(/^find/, function () {
+  this.populate('author').populate('answers.author', '-role')
+})
+
+questionSchema.pre('save', function (next) {
   this.wasNew = this.isNew
   next()
 })
 
-questionSchema.post('save', (doc, next) => {
-  if (this.wasNew) this.vote(this.author._id, 1)
-  doc
-    .populate('author')
-    .populate('answers.author', '-role')
-    .execPopulate()
-    .then(() => next())
+questionSchema.post('save', async function (doc, next) {
+  await doc.populate('author')
+  await doc.populate('answers.author', '-role')
+  next()
 })
 
 module.exports = mongoose.model('Question', questionSchema)
