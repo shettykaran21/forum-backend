@@ -5,6 +5,7 @@ const {
   loadComment,
   deleteComment,
   createAnswerComment,
+  deleteAnswerComment,
 } = require('../controllers/comments')
 const { loadQuestion } = require('../controllers/questions')
 const { loadAnswer } = require('../controllers/answers')
@@ -15,9 +16,9 @@ const router = express.Router()
 
 router.param('questionId', loadQuestion)
 
-router.param('commentId', loadComment)
-
 router.param('answerId', loadAnswer)
+
+router.param('commentId', loadComment)
 
 router.post('/:questionId', [isAuth, validateComment], createComment)
 
@@ -28,5 +29,11 @@ router.post(
 )
 
 router.delete('/:questionId/:commentId', [isAuth, commentAuth], deleteComment)
+
+router.delete(
+  '/:questionId/:answerId/:commentId',
+  [isAuth, commentAuth],
+  deleteAnswerComment
+)
 
 module.exports = router

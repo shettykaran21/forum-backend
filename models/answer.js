@@ -34,6 +34,19 @@ answerSchema.methods = {
     this.comments.push({ author, body })
     return this
   },
+
+  removeComment: function (id) {
+    const comment = this.comments.id(id)
+
+    if (!comment) {
+      const error = new Error('Comment not found')
+      error.statusCode = 404
+      throw error
+    }
+
+    comment.remove()
+    return this
+  },
 }
 
 module.exports = answerSchema
