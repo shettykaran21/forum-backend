@@ -1,4 +1,5 @@
 const Question = require('../models/question')
+const { handleServerError } = require('../utils/handleError')
 
 exports.getTags = async (req, res, next) => {
   try {
@@ -8,11 +9,9 @@ exports.getTags = async (req, res, next) => {
       { $group: { _id: '$tags', count: { $sum: 1 } } },
       { $sort: { count: -1 } },
     ])
-    res.status(200).json(tags)
+    res.status(200).json({ message: 'Tags fetched successfully', data: tags })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
@@ -26,11 +25,11 @@ exports.getPopularTags = async (req, res, next) => {
       { $sort: { count: -1 } },
       { $limit: 25 },
     ])
-    res.status(200).json(tags)
+    res
+      .status(200)
+      .json({ message: 'Popular tags fetched successfully', data: tags })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
@@ -46,11 +45,9 @@ exports.searchTags = async (req, res, next) => {
       { $sort: { count: -1 } },
     ])
 
-    res.status(200).json(tags)
+    res.status(200).json({ message: 'Tags fetched successfully', data: tags })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }

@@ -1,5 +1,11 @@
 const { validationResult } = require('express-validator')
 
+const {
+  handleServerError,
+  createError,
+  handleCastError,
+} = require('../utils/handleError')
+
 exports.loadComment = async (req, res, next, id) => {
   try {
     let comment
@@ -10,20 +16,14 @@ exports.loadComment = async (req, res, next, id) => {
     }
 
     if (!comment) {
-      const error = new Error('Comment not found')
-      error.statusCode = 404
+      const error = createError('Comment not found', 404)
       throw error
     }
 
     req.comment = comment
   } catch (err) {
-    if (err.name === 'CastError') {
-      err.statusCode = 400
-      err.message = 'Invalid comment id'
-    }
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleCastError(err)
+    handleServerError(err)
     next(err)
   }
   next()
@@ -34,9 +34,11 @@ exports.createComment = async (req, res, next) => {
 
   try {
     if (!errors.isEmpty()) {
-      const error = new Error('Validation failed')
-      error.statusCode = 422
-      error.data = errors.array({ onlyFirstError: true })
+      const error = createError(
+        'Validation failed',
+        422,
+        errors.array({ onlyFirstError: true })
+      )
       throw error
     }
 
@@ -48,9 +50,7 @@ exports.createComment = async (req, res, next) => {
       .status(201)
       .json({ message: 'Comment posted successfully', data: question })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
@@ -63,9 +63,7 @@ exports.deleteComment = async (req, res, next) => {
       .status(200)
       .json({ message: 'Comment deleted successfully', data: question })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
@@ -75,9 +73,11 @@ exports.createAnswerComment = async (req, res, next) => {
 
   try {
     if (!errors.isEmpty()) {
-      const error = new Error('Validation failed')
-      error.statusCode = 422
-      error.data = errors.array({ onlyFirstError: true })
+      const error = createError(
+        'Validation failed',
+        422,
+        errors.array({ onlyFirstError: true })
+      )
       throw error
     }
 
@@ -91,9 +91,7 @@ exports.createAnswerComment = async (req, res, next) => {
       .status(201)
       .json({ message: 'Comment posted successfully', data: question })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
@@ -108,9 +106,7 @@ exports.deleteAnswerComment = async (req, res, next) => {
       .status(200)
       .json({ message: 'Comment deleted successfully', data: question })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }

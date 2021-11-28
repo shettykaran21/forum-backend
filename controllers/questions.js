@@ -2,26 +2,25 @@ const { validationResult } = require('express-validator')
 
 const Question = require('../models/question')
 const User = require('../models/user')
+const {
+  handleCastError,
+  handleServerError,
+  createError,
+} = require('../utils/handleError')
 
 exports.loadQuestion = async (req, res, next, id) => {
   try {
     const question = await Question.findById(id)
 
     if (!question) {
-      const error = new Error('Question not found')
-      error.statusCode = 404
+      const error = createError('Question not found', 404)
       throw error
     }
 
     req.question = question
   } catch (err) {
-    if (err.name === 'CastError') {
-      err.statusCode = 400
-      err.message = 'Invalid question id'
-    }
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleCastError(err)
+    handleServerError(err)
     next(err)
   }
   next()
@@ -48,9 +47,7 @@ exports.getQuestions = async (req, res, next) => {
       .status(200)
       .json({ message: 'Questions fetched successfully', data: questions })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
@@ -60,9 +57,11 @@ exports.createQuestion = async (req, res, next) => {
 
   try {
     if (!errors.isEmpty()) {
-      const error = new Error('Validation failed')
-      error.statusCode = 422
-      error.data = errors.array({ onlyFirstError: true })
+      const error = createError(
+        'Validation failed',
+        422,
+        errors.array({ onlyFirstError: true })
+      )
       throw error
     }
 
@@ -78,9 +77,7 @@ exports.createQuestion = async (req, res, next) => {
       .status(201)
       .json({ message: 'Question posted successfully', data: question })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
@@ -96,8 +93,7 @@ exports.getQuestion = async (req, res, next) => {
     ).populate('answers')
 
     if (!question) {
-      const error = new Error('Could not find question')
-      error.statusCode = 404
+      const error = createError('Could not find question', 404)
       throw error
     }
 
@@ -105,9 +101,7 @@ exports.getQuestion = async (req, res, next) => {
       .status(200)
       .json({ message: 'Question fetched successfully', data: question })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
@@ -124,8 +118,7 @@ exports.getQuestionsByUser = async (req, res, next) => {
     const author = await User.findOne({ username })
 
     if (!author) {
-      const error = new Error('User not found')
-      error.statusCode = 404
+      const error = createError('User not found', 404)
       throw error
     }
 
@@ -136,9 +129,7 @@ exports.getQuestionsByUser = async (req, res, next) => {
       data: questions,
     })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
@@ -148,9 +139,7 @@ exports.deleteQuestion = async (req, res, next) => {
     await req.question.remove()
     res.status(200).json({ message: 'Question deleted successfully' })
   } catch (error) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }

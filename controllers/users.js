@@ -1,14 +1,13 @@
 const User = require('../models/user')
+const { handleServerError, createError } = require('../utils/handleError')
 
 exports.getUsers = async (req, res, next) => {
   try {
     const sortType = '-created'
     const users = await User.find().sort(sortType)
-    res.status(200).json(users)
+    res.status(200).json({ message: 'Users fetched successfully', data: users })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
@@ -20,15 +19,13 @@ exports.getUser = async (req, res, next) => {
     const user = await User.findOne({ username })
 
     if (!user) {
-      const error = new Error('Could not find user')
-      error.statusCode = 404
+      const error = createError('Could not find user', 404)
       throw error
     }
-    res.status(200).json({ message: 'User found', user })
+
+    res.status(200).json({ message: 'User found', data: user })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
@@ -41,11 +38,9 @@ exports.searchUsers = async (req, res, next) => {
       username: { $regex: searchUsername, $options: 'i' },
     })
 
-    res.status(200).json(users)
+    res.status(200).json({ message: 'Users fetched successfully', data: users })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }

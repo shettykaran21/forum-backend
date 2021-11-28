@@ -1,24 +1,24 @@
 const { validationResult } = require('express-validator')
 
+const {
+  handleServerError,
+  handleCastError,
+  createError,
+} = require('../utils/handleError')
+
 exports.loadAnswer = async (req, res, next, id) => {
   try {
     const answer = await req.question.answers.id(id)
 
     if (!answer) {
-      const error = new Error('Answer not found')
-      error.statusCode = 404
+      const error = createError('Answer not found', 404)
       throw error
     }
 
     req.answer = answer
   } catch (err) {
-    if (err.name === 'CastError') {
-      err.statusCode = 400
-      err.message = 'Invalid answer id'
-    }
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleCastError(err)
+    handleServerError(err)
     next(err)
   }
   next()
@@ -29,9 +29,11 @@ exports.createAnswer = async (req, res, next) => {
 
   try {
     if (!errors.isEmpty()) {
-      const error = new Error('Validation failed')
-      error.statusCode = 422
-      error.data = errors.array({ onlyFirstError: true })
+      const error = createError(
+        'Validation failed',
+        422,
+        errors.array({ onlyFirstError: true })
+      )
       throw error
     }
 
@@ -44,9 +46,7 @@ exports.createAnswer = async (req, res, next) => {
       .status(201)
       .json({ message: 'Answer posted successfully', data: question })
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }

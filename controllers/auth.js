@@ -3,15 +3,18 @@ const jwtDecode = require('jwt-decode')
 
 const { createToken, hashPassword, verifyPassword } = require('../utils/auth')
 const User = require('../models/user')
+const { handleServerError, createError } = require('../utils/handleError')
 
 exports.signup = async (req, res, next) => {
   const errors = validationResult(req)
 
   try {
     if (!errors.isEmpty()) {
-      const error = new Error('Validation failed')
-      error.statusCode = 422
-      error.data = errors.array({ onlyFirstError: true })
+      const error = createError(
+        'Validation failed',
+        422,
+        errors.array({ onlyFirstError: true })
+      )
       throw error
     }
 
@@ -29,8 +32,7 @@ exports.signup = async (req, res, next) => {
     })
 
     if (existingUsername) {
-      const error = new Error('This username already exists')
-      error.statusCode = 400
+      const error = createError('This username already exists', 400)
       throw error
     }
 
@@ -58,15 +60,14 @@ exports.signup = async (req, res, next) => {
         expiresAt,
       })
     } else {
-      const error = new Error('Some error occurred while creating your account')
-      error.statusCode = 400
+      const error = createError(
+        'Some error occurred while creating your account',
+        400
+      )
       throw error
     }
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
-    next(err)
+    handleServerError(err)
   }
 }
 
@@ -75,9 +76,11 @@ exports.login = async (req, res, next) => {
 
   try {
     if (!errors.isEmpty()) {
-      const error = new Error('Validation failed')
-      error.statusCode = 422
-      error.data = errors.array({ onlyFirstError: true })
+      const error = createError(
+        'Validation failed',
+        422,
+        errors.array({ onlyFirstError: true })
+      )
       throw error
     }
 
@@ -87,8 +90,7 @@ exports.login = async (req, res, next) => {
     })
 
     if (!user) {
-      const error = new Error('Username not found')
-      error.statusCode = 401
+      const error = createError('Username not found', 401)
       throw error
     }
 
@@ -109,14 +111,11 @@ exports.login = async (req, res, next) => {
         expiresAt,
       })
     } else {
-      const error = new Error('Incorrect password')
-      error.statusCode = 401
+      const error = createError('Incorrect password', 401)
       throw error
     }
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
+    handleServerError(err)
     next(err)
   }
 }
