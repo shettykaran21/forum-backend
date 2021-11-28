@@ -124,7 +124,16 @@ questionSchema.pre(/^find/, function () {
     .populate('answers.comments.author', '-role')
 })
 
+questionSchema.pre('save', function (next) {
+  this.wasNew = this.isNew
+  next()
+})
+
 questionSchema.post('save', async function (doc, next) {
+  if (this.wasNew) {
+    this.vote(this.author._id, 1)
+  }
+
   await doc.populate('author')
   await doc.populate('answers.author', '-role')
   await doc.populate('comments.author', '-role')
