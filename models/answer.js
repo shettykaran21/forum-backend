@@ -29,4 +29,11 @@ const answerSchema = new Schema({
 
 answerSchema.set('toJSON', { getters: true })
 
+answerSchema.methods = {
+  addComment: function (author, body) {
+    this.comments.push({ author, body })
+    return this
+  },
+}
+
 module.exports = answerSchema

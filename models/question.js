@@ -93,17 +93,14 @@ questionSchema.pre(/^find/, function () {
   this.populate('author')
     .populate('answers.author', '-role')
     .populate('comments.author', '-role')
-})
-
-questionSchema.pre('save', function (next) {
-  this.wasNew = this.isNew
-  next()
+    .populate('answers.comments.author', '-role')
 })
 
 questionSchema.post('save', async function (doc, next) {
   await doc.populate('author')
   await doc.populate('answers.author', '-role')
   await doc.populate('comments.author', '-role')
+  await doc.populate('answers.comments.author', '-role')
   next()
 })
 
