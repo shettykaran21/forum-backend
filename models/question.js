@@ -87,6 +87,34 @@ questionSchema.methods = {
     comment.remove()
     return this.save()
   },
+
+  vote: function (userId, vote) {
+    const existingVote = this.votes.find((vote) => vote.user._id.equals(userId))
+
+    if (!existingVote && vote !== 0) {
+      // New vote
+      this.score += vote
+      this.votes.push({ user: userId, vote })
+    }
+
+    if (existingVote) {
+      // Reset score
+      this.score -= existingVote.vote
+
+      // Remove vote
+      // Eg. If user has upvoted, and user wants to remove upvote
+      if (vote === 0) {
+        this.votes.pull(existingVote)
+      } else {
+        // Change vote
+        // Eg. If user has upvoted, and user wants to downvote or vice-versa
+        this.score += vote
+        existingVote.vote = vote
+      }
+    }
+
+    return this.save()
+  },
 }
 
 questionSchema.pre(/^find/, function () {

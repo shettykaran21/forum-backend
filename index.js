@@ -10,6 +10,7 @@ const questionRoutes = require('./routes/questions')
 const tagRoutes = require('./routes/tags')
 const answerRoutes = require('./routes/answers')
 const commentRoutes = require('./routes/comments')
+const voteRoutes = require('./routes/votes')
 
 const app = express()
 
@@ -22,6 +23,7 @@ app.use('/questions', questionRoutes)
 app.use('/tags', tagRoutes)
 app.use('/answers', answerRoutes)
 app.use('/comments', commentRoutes)
+app.use('/votes', voteRoutes)
 
 app.use((error, req, res, next) => {
   const status = error.statusCode || 500
