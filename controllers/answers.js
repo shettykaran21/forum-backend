@@ -17,7 +17,7 @@ exports.loadAnswer = async (req, res, next, id) => {
 
     req.answer = answer
   } catch (err) {
-    handleCastError(err)
+    handleCastError(err, 'Invalid answer id')
     handleServerError(err)
     next(err)
   }

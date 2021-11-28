@@ -19,7 +19,7 @@ exports.loadQuestion = async (req, res, next, id) => {
 
     req.question = question
   } catch (err) {
-    handleCastError(err)
+    handleCastError(err, 'Invalid question id')
     handleServerError(err)
     next(err)
   }

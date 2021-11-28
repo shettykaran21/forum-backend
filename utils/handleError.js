@@ -4,10 +4,10 @@ exports.handleServerError = (err) => {
   }
 }
 
-exports.handleCastError = (err) => {
+exports.handleCastError = (err, msg) => {
   if (err.name === 'CastError') {
     err.statusCode = 400
-    err.message = 'Invalid answer id'
+    err.message = msg
   }
 }
 

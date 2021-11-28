@@ -22,7 +22,7 @@ exports.loadComment = async (req, res, next, id) => {
 
     req.comment = comment
   } catch (err) {
-    handleCastError(err)
+    handleCastError(err, 'Invalid comment id')
     handleServerError(err)
     next(err)
   }
