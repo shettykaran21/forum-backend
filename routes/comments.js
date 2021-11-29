@@ -20,13 +20,7 @@ router.param('answerId', loadAnswer)
 
 router.param('commentId', loadComment)
 
-router.post('/:questionId', [isAuth, validateComment], createComment)
-
-router.post(
-  '/:questionId/:answerId',
-  [isAuth, validateComment],
-  createAnswerComment
-)
+router.post('/:questionId/:answerId?', [isAuth, validateComment], createComment)
 
 router.delete('/:questionId/:commentId', [isAuth, commentAuth], deleteComment)
 

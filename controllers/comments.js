@@ -45,6 +45,14 @@ exports.createComment = async (req, res, next) => {
     const { id } = req.user
     const { text } = req.body
 
+    if (req.params.answerId) {
+      req.answer.addComment(id, text)
+      const question = await req.question.save()
+      return res
+        .status(201)
+        .json({ message: 'Comment posted successfully', data: question })
+    }
+
     const question = await req.question.addComment(id, text)
     res
       .status(201)
@@ -62,34 +70,6 @@ exports.deleteComment = async (req, res, next) => {
     return res
       .status(200)
       .json({ message: 'Comment deleted successfully', data: question })
-  } catch (err) {
-    handleServerError(err)
-    next(err)
-  }
-}
-
-exports.createAnswerComment = async (req, res, next) => {
-  const errors = validationResult(req)
-
-  try {
-    if (!errors.isEmpty()) {
-      const error = createError(
-        'Validation failed',
-        422,
-        errors.array({ onlyFirstError: true })
-      )
-      throw error
-    }
-
-    const { id } = req.user
-    const { text } = req.body
-
-    req.answer.addComment(id, text)
-    const question = await req.question.save()
-
-    res
-      .status(201)
-      .json({ message: 'Comment posted successfully', data: question })
   } catch (err) {
     handleServerError(err)
     next(err)
