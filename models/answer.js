@@ -47,6 +47,27 @@ answerSchema.methods = {
     comment.remove()
     return this
   },
+
+  vote: function (userId, vote) {
+    const existingVote = this.votes.find((vote) => vote.user._id.equals(userId))
+
+    if (!existingVote && vote !== 0) {
+      this.score += vote
+      this.votes.push({ user: userId, vote })
+    }
+
+    if (existingVote) {
+      this.score -= existingVote.vote
+
+      if (vote === 0) {
+        this.votes.pull(existingVote)
+      } else {
+        this.score += vote
+        existingVote.vote = vote
+      }
+    }
+    return this
+  },
 }
 
 module.exports = answerSchema
