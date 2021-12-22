@@ -68,6 +68,7 @@ exports.signup = async (req, res, next) => {
     }
   } catch (err) {
     handleServerError(err)
+    next(err)
   }
 }
 
