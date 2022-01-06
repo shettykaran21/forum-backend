@@ -39,6 +39,9 @@ exports.validateQuestion = [
     .notEmpty()
     .withMessage('Title cannot be blank')
 
+    .isLength({ min: 10 })
+    .withMessage('Title must be at lease 10 characters long')
+
     .isLength({ max: 180 })
     .withMessage('Title must be at most 180 characters long'),
 
@@ -47,11 +50,11 @@ exports.validateQuestion = [
     .trim()
     .withMessage('Text is required')
 
-    .isLength({ min: 10 })
-    .withMessage('Text must be at least 10 characters long')
+    .isLength({ min: 20 })
+    .withMessage('Text must be at least 20 characters long')
 
-    .isLength({ max: 5000 })
-    .withMessage('Text must be at most 5000 characters long'),
+    .isLength({ max: 20000 })
+    .withMessage('Text must be at most 20000 characters long'),
 
   body('tags').exists().withMessage('is required'),
 ]

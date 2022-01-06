@@ -1,7 +1,11 @@
+const path = require('path')
+
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
 require('dotenv').config()
+const multer = require('multer')
+const { v4: uuidv4 } = require('uuid')
 
 const config = require('./config')
 const authRoutes = require('./routes/auth')
@@ -14,8 +18,33 @@ const voteRoutes = require('./routes/votes')
 
 const app = express()
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'images')
+  },
+  filename: function (req, file, cb) {
+    cb(null, uuidv4())
+  },
+})
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true)
+  } else {
+    cb(null, false)
+  }
+}
+
 app.use(cors())
 app.use(express.json())
+
+app.use(multer({ storage, fileFilter }).single('image'))
+
+app.use('/images', express.static(path.join(__dirname, 'images')))
 
 app.use('/auth', authRoutes)
 app.use('/users', userRoutes)
@@ -33,11 +62,15 @@ app.use((error, req, res, next) => {
 })
 
 const connect = async () => {
-  await mongoose.connect(config.db.url)
-  console.log('Connected to MongoDB')
+  try {
+    await mongoose.connect(config.db.url)
+    console.log('Connected to MongoDB')
+  } catch (err) {
+    console.log(err)
+  }
 }
 
-connect().catch((err) => console.log(err))
+connect()
 
 app.listen(config.port, () => {
   console.log(`Server is running on port ${config.port}`)
