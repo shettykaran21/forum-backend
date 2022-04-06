@@ -72,13 +72,6 @@ const connect = async () => {
 
 connect()
 
-app.use(express.static(path.resolve(__dirname, '../client/.next/server/pages')))
-app.get('*', function (req, res) {
-  res.sendFile(
-    path.resolve(__dirname, '../client/.next/server/pages', 'index.html')
-  )
-})
-
 app.listen(config.port, () => {
   console.log(`Server is running on port ${config.port}`)
 })
